@@ -4,12 +4,12 @@
 
 ```
 $ cd ocaml
-$ dune exec 1/AC1.exe <input
+$ dune exec 01/AC01.exe <input
 ```
 
 ## Rust
 
 ```
 $ cd rust
-$ cargo exec --bin ac1 <input
+$ cargo exec --bin ac01 <input
 ```
