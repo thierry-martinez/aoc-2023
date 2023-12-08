@@ -1,0 +1,3 @@
+(executable
+  (name AC7)
+  (libraries common))

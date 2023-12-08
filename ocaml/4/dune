@@ -1,0 +1,3 @@
+(executable
+  (name AC4)
+  (libraries common))
