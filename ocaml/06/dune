@@ -1,3 +1,3 @@
 (executable
-  (name AC6)
+  (name AC06)
   (libraries common))
