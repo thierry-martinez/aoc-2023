@@ -16,7 +16,7 @@ delta = 49 - 36 = 13
 alpha = - 
 *)
 
-let _get_winning_ways (time, distance) =
+let get_winning_ways time distance =
   let time_f = float_of_int time in
   let distance_f = float_of_int distance in
   let delta = time_f ** 2. -. 4. *. distance_f in
@@ -36,15 +36,19 @@ let _get_winning_ways (time, distance) =
   int_of_float min_holding_time, int_of_float max_holding_time
 
 let get_number_of_winning_ways (time, distance) =
+  let (min, max) = get_winning_ways time distance in
+  max - min + 1
+
+(* It appears that inputs are small enough for the following solution
+   to be suitable even for Part 2.
+
   let result = ref 0 in
   for i = 0 to time do
     if i * (time - i) > distance then
       incr result
   done;
   !result
-
-let _print_pair fmt (min, max) =
-  Format.fprintf fmt "%d:%d (%d)" min max (max - min + 1)
+*)
 
 let solve input get_numbers =
   let times_str, input = Option.get (Seq.uncons input) in
@@ -52,11 +56,6 @@ let solve input get_numbers =
   let times = get_numbers times_str in
   let distances = get_numbers distances_str in
   let records = List.combine times distances in
-(*
-  let winning_ways = List.map get_winning_ways records in
-  let number_of_winning_ways =
-    List.map (fun (min, max) -> max - min + 1) winning_ways in
-*)
   let number_of_winning_ways = List.map get_number_of_winning_ways records in
   List.fold_left ( * ) 1 number_of_winning_ways
 

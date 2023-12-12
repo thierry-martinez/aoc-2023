@@ -1,3 +1,0 @@
-(executable
-  (name AC06)
-  (libraries common))

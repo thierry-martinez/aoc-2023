@@ -1,3 +1,0 @@
-(executable
-  (name AC08)
-  (libraries common))

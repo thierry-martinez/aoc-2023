@@ -4,7 +4,7 @@
 
 ```
 $ cd ocaml
-$ dune exec 01/AC01.exe <input
+$ dune exec ./AC01.exe <input
 ```
 
 ## Rust
@@ -12,4 +12,11 @@ $ dune exec 01/AC01.exe <input
 ```
 $ cd rust
 $ cargo exec --bin ac01 <input
+```
+
+## Haskell
+
+```
+$ cd haskell
+$ ghc ac01.hs && ./ac01 <input
 ```

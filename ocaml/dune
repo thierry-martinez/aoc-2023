@@ -1,0 +1,48 @@
+(executable
+  (name AC01)
+  (modules AC01)
+  (libraries common))
+(executable
+  (name AC02)
+  (modules AC02)
+  (libraries common))
+(executable
+  (name AC03)
+  (modules AC03)
+  (libraries common))
+(executable
+  (name AC04)
+  (modules AC04)
+  (libraries common))
+(executable
+  (name AC05)
+  (modules AC05)
+  (libraries common))
+(executable
+  (name AC06)
+  (modules AC06)
+  (libraries common))
+(executable
+  (name AC07)
+  (modules AC07)
+  (libraries common))
+(executable
+  (name AC08)
+  (modules AC08)
+  (libraries common))
+(executable
+  (name AC09)
+  (modules AC09)
+  (libraries common))
+(executable
+  (name AC10)
+  (modules AC10)
+  (libraries common))
+(executable
+  (name AC11)
+  (modules AC11)
+  (libraries common))
+(executable
+  (name AC12)
+  (modules AC12)
+  (libraries common))
