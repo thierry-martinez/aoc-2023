@@ -6,16 +6,18 @@ fn number_ways(time: u64, distance: u64) -> u64 {
     let distance = distance as f64;
     let delta = time.powf(2.) - 4.0 * distance;
     let sqrt_delta = delta.sqrt();
-    let alpha = - (- time - sqrt_delta) / 2.;
-    let beta = - (- time + sqrt_delta) / 2.;
+    let alpha = - (- time + sqrt_delta) / 2.;
+    let mut min_holding_time = alpha.ceil();
+    if min_holding_time == alpha {
+	min_holding_time += 1.;
+    }
+    (time - 2. * min_holding_time) as u64 + 1
+}
+
+/* We could also compute
+
+    let beta = - (- time - sqrt_delta) / 2.;
     let max_holding_time =
-	if alpha.floor() == alpha {
-	    alpha - 1.0
-	}
-	else {
-	    alpha.floor()
-	};
-    let min_holding_time =
 	if beta.ceil() == beta {
 	    beta + 1.0
 	}
@@ -23,7 +25,9 @@ fn number_ways(time: u64, distance: u64) -> u64 {
 	    beta.ceil()
 	};
     (max_holding_time - min_holding_time) as u64 + 1
-}
+
+  but it worth noticing that max_holding_time = time - min_holding_time
+*/
 
 fn part1(times_str: &str, distances_str: &str) -> u64 {
     let times = times_str.split(" ").filter_map(|s| s.parse().ok());
@@ -40,9 +44,9 @@ fn part2(times_str: &str, distances_str: &str) -> u64 {
 fn main() {
     let mut lines = std::io::stdin().lines();
     let times_line = lines.next().unwrap().unwrap();
-    let times_str = times_line.splitn(2, ":").skip(1).next().unwrap();
+    let times_str = times_line.as_str().strip_prefix("Time:").unwrap();
     let distances_line = lines.next().unwrap().unwrap();
-    let distances_str = distances_line.splitn(2, ":").skip(1).next().unwrap();
+    let distances_str = distances_line.as_str().strip_prefix("Distance:").unwrap();
     let result_part1: u64 = part1(times_str, distances_str);
     let result_part2: u64 = part2(times_str, distances_str);
     println!("Part 1: {result_part1}");

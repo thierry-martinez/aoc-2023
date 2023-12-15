@@ -1,39 +1,34 @@
-(*
-let total_distance race_time holding_time =
-  (race_time - holding_time) * holding_time
-
-let ways_to_beat race_time record =
-   - holding_time ^ 2 + race_time * holding_time - record > 0
-
-- 4 + 14 - 9 = 1
-
-delta = race_time ^ 2 - 4 * record
-
-alpha = (race_time - sqrt(delta)) / 2
-beta = (race_time + str(delta)) / 2
-
-delta = 49 - 36 = 13
-alpha = - 
-*)
-
 let get_winning_ways time distance =
+  (* #hold s.t. (time - hold) * hold > distance
+     i.e. - hold ** 2 + time * hold - distance > 0
+   *)
   let time_f = float_of_int time in
   let distance_f = float_of_int distance in
   let delta = time_f ** 2. -. 4. *. distance_f in
   let sqrt_delta = sqrt delta in
   let alpha = (time_f -. sqrt_delta) /. 2. in
+  let ceil_alpha = ceil alpha in
+  let min_holding_time_f =
+    if ceil_alpha = alpha then
+      alpha +. 1.
+    else
+      ceil_alpha in
+  let min_holding_time = int_of_float min_holding_time_f in
+  min_holding_time, time - min_holding_time
+
+(*
+  We could also compute
+
   let beta = (time_f +. sqrt_delta) /. 2. in
-  let max_holding_time =
+  let max_holding_time_f =
     if floor beta = beta then
       beta -. 1.
     else
       floor beta in
-  let min_holding_time =
-    if ceil alpha = alpha then
-      alpha +. 1.
-    else
-      ceil alpha in
-  int_of_float min_holding_time, int_of_float max_holding_time
+  int_of_float min_holding_time_f, int_of_float max_holding_time_f
+
+  but it worth noticing that max_holding_time = time - min_holding_time
+*)
 
 let get_number_of_winning_ways (time, distance) =
   let (min, max) = get_winning_ways time distance in

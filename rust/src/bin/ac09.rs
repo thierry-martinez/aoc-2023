@@ -18,8 +18,8 @@ fn estimate(
 
 fn main() {
     let lines = std::io::stdin().lines();
-    let number_lines: Vec<Vec<i64>> = lines.map(
-	|line| line.unwrap().split(" ").map(|s| s.parse().unwrap()).collect()
+    let number_lines: Vec<Vec<i64>> = lines.map(|line|
+        line.unwrap().as_str().split(' ').map(|s| s.parse().unwrap()).collect()
     ).collect();
     let result_part1: i64 =
 	number_lines.iter().map(

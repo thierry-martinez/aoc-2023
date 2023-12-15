@@ -22,7 +22,8 @@ englishDigitPrefixToInt str =
   ) englishDigits))
 
 findEnglishDigit list =
-  fst (fromJust (uncons (catMaybes (map englishDigitPrefixToInt list))))
+  let digit:_ = catMaybes (map englishDigitPrefixToInt list)
+  in digit
 
 firstEnglishDigit str =
   findEnglishDigit (tails str)

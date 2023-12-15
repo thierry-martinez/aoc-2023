@@ -14,18 +14,18 @@ fn main() {
     let games: Vec<_> = lines.map(
 	|line| {
 	    let line = line.unwrap();
-	    let mut line_items = line.splitn(2, ": ");
-	    let game_items = line_items.next().unwrap().splitn(2, " ");
-	    let id: u64 = game_items.skip(1).next().unwrap().parse().unwrap();
-	    let set_items = line_items.next().unwrap().split("; ");
+            let (game_str, set_str) = line.as_str().split_once(": ").unwrap();
+            let id: u64 =
+                game_str.strip_prefix("Game ").unwrap().parse().unwrap();
+	    let set_items = set_str.split("; ");
 	    let sets: Vec<_> = set_items.map(
 		|set_str| {
 		    set_str.split(", ").fold(
 			CubeSet { red: 0, green: 0, blue: 0 },
 			|set, color_cube_str| {
-			    let mut items = color_cube_str.splitn(2, " ");
-			    let count : u64 = items.next().unwrap().parse().unwrap();
-			    let color = items.next().unwrap();
+			    let (count_str, color) =
+                                color_cube_str.split_once(" ").unwrap();
+			    let count: u64 = count_str.parse().unwrap();
 			    match color {
 				"red" => CubeSet { red: count, ..set },
 				"green" => CubeSet { green: count, ..set },

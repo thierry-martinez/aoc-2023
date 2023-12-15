@@ -1,6 +1,5 @@
 import Data.Array
 import Data.List
-import Data.Maybe
 
 distances galaxies emptyRows emptyColumns factor =
     sum [ sum [ abs (x1 - x2) + abs (y1 - y2) +
@@ -12,7 +11,8 @@ distances galaxies emptyRows emptyColumns factor =
 main = do
     contents <- getContents
     let grid = map (map (== '#')) (lines contents)
-    let width = length (fst (fromJust (uncons grid)))
+    let first:_ = grid
+    let width = length first
     let emptyRows =
           listArray (0, length grid)
           (scanl1 (+) (map (fromEnum . all not) grid))

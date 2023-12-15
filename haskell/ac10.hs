@@ -90,10 +90,10 @@ arrayOfList list =
 main = do
   contents <- getContents
   let grid = arrayOfList (map arrayOfList (lines contents))
-  let animal = fst (fromJust (uncons [(x, y) |
-                                      y <- range (bounds grid),
-                                      x <- range (bounds (grid ! y)),
-                                      getCell grid (x, y) == 'S']))
+  let animal:_ = [(x, y) |
+                   y <- range (bounds grid),
+                   x <- range (bounds (grid ! y)),
+                   getCell grid (x, y) == 'S']
   let pipes = array (bounds grid) [(y, []) | y <- range (bounds grid)]
   let (pipes', len) = measureCycle grid pipes animal
   let area = measureInside pipes'

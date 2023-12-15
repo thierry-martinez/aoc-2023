@@ -1,10 +1,9 @@
 import Data.Char
 import Data.List
-import Data.Maybe
 
 cut p list =
-  let (hd, tl) = break p list
-  in (hd, snd (fromJust (uncons tl)))
+  let (hd, (_:tl)) = break p list
+  in (hd, tl)
 
 split p list =
   let (hd, tl) = break p list
@@ -13,9 +12,9 @@ split p list =
     _:tl -> hd:split p tl
 
 parseInput lines =
-  let (time_line, tail) = fromJust (uncons lines)
+  let time_line:tail = lines
       time_str = drop (length "Time:") time_line
-      (distance_line, _tail) = fromJust (uncons tail)
+      distance_line:_tail = tail
       distance_str = drop (length "Distance:") distance_line
   in (time_str, distance_str)
 
@@ -25,18 +24,13 @@ numberOfWays (time, distance) =
       distance_f :: Double = fromIntegral distance
       delta = time_f ** 2 - 4 * distance_f
       alpha = (time_f - sqrt delta) / 2
-      beta = (time_f + sqrt delta) / 2
-      max_holding_time =
-        if fromIntegral (floor beta) == beta then
-          floor beta - 1
-        else
-          floor beta
+      ceiling_alpha = ceiling alpha
       min_holding_time =
-        if fromIntegral (ceiling alpha) == alpha then
-          ceiling alpha + 1
+        if fromIntegral ceiling_alpha == alpha then
+          ceiling_alpha + 1
         else
-          ceiling alpha
-  in max_holding_time - min_holding_time + 1
+          ceiling_alpha
+  in time - 2 * min_holding_time + 1
 
 main = do
   input <- getContents

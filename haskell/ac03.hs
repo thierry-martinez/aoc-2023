@@ -1,11 +1,10 @@
 import Data.Char
 import Data.List
-import Data.Maybe
 import qualified Data.Map as Map
 
 cut p list =
-  let (hd, tl) = break p list
-  in (hd, snd (fromJust (uncons tl)))
+  let (hd, _:tl) = break p list
+  in (hd, tl)
 
 split p list =
   let (hd, tl) = break p list
@@ -20,7 +19,7 @@ findSymbols line =
   filter (checkSymbol . snd) line
 
 parseNumber list =
-  let ((x, _c), _tl) = fromJust (uncons list)
+  let (x, _c):_tl = list
   in (x, (length list, read (map snd list)))
 
 findNumbers =
@@ -45,7 +44,8 @@ getGearRatio (current, (previous, next)) (x, c) =
     0
 
 neighborhood empty list =
-  zip list (zip (empty:list) (snd (fromJust (uncons list)) ++ [empty]))
+  let _:tl = list in
+  zip list (zip (empty:list) (tl ++ [empty]))
 
 getGearRatios (neighborhood, columns) =
   map (getGearRatio neighborhood) columns

@@ -2,8 +2,8 @@ import Data.List
 import Data.Maybe
 
 cut p list =
-  let (hd, tl) = break p list
-  in (hd, snd (fromJust (uncons tl)))
+  let (hd, (_:tl)) = break p list
+  in (hd, tl)
 
 split p list =
   let (hd, tl) = break p list
@@ -27,8 +27,7 @@ solve side op numbers =
 parse line =
   map read (split (== ' ') line)
 
-first list =
-  fst (fromJust (uncons list))
+first (hd:_) = hd
 
 main = do
   input <- getContents

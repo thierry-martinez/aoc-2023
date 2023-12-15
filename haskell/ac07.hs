@@ -1,6 +1,5 @@
 import Data.List
 import Data.Char
-import Data.Maybe
 import qualified Data.Map as Map
 
 data Kind = Five | Four | Full | Three | Two | One | High
@@ -34,14 +33,15 @@ kindOfStrPart2 hand =
   in kindOfCounts counts
 
 handBidOfStr str =
-  let (hand, rest) = break isSpace str
-  in (hand, read (snd (fromJust (uncons rest))))
+  let (hand, (_space:rest)) = break isSpace str
+  in (hand, read rest)
 
 strengthPart1 = "AKQJT98765432"
 strengthPart2 = "AKQT98765432J"
 
 getStrength strength card =
-  fst (fromJust (uncons (filter ((== card) . snd) (zip [0..] strength))))
+  let hd:_ = filter ((== card) . snd) (zip [0..] strength)
+  in hd
 
 handBidCompare getKind strength (hand1, _bid1) (hand2, _bid2) =
   case compare (getKind hand2) (getKind hand1) of

@@ -14,7 +14,7 @@ struct Range {
 fn main() {
     let mut lines = std::io::stdin().lines();
     let seeds: Vec<u64> =
-	lines.next().unwrap().unwrap().splitn(2, ": ").skip(1).next().unwrap()
+	lines.next().unwrap().unwrap().as_str().strip_prefix("seeds: ").unwrap()
 	.split(" ").map(|s| s.parse().unwrap()).collect();
     let mut lines = lines.skip(1);
     let mut maps = Vec::new();
@@ -25,7 +25,8 @@ fn main() {
 	    if line == "" {
 		break;
 	    }
-	    let mut values = line.split(" ").map(|s| s.parse().unwrap());
+	    let mut values =
+                line.as_str().split(" ").map(|s| s.parse().unwrap());
 	    let dst = values.next().unwrap();
 	    let src = values.next().unwrap();
 	    let len = values.next().unwrap();

@@ -3,14 +3,14 @@ fn main() {
     let cards: Vec<_> = lines.map(
 	|line| {
 	    let line = line.unwrap();
-	    let mut contents =
-		line.splitn(2, ": ").skip(1).next().unwrap().splitn(2, " | ");
+            let (_, contents) = line.as_str().split_once(':').unwrap();
+            let (winning_numbers_str, numbers_str) =
+                contents.split_once(" | ").unwrap();
 	    let winning_numbers: std::collections::HashSet<i64> =
-		contents.next().unwrap().split(" ")
+		winning_numbers_str.split(" ")
 		.filter_map(|s| s.parse().ok()).collect();
 	    let winning_numbers_count =
-		contents.next().unwrap().split(" ")
-		.filter_map(|s| s.parse().ok())
+		numbers_str.split(" ").filter_map(|s| s.parse().ok())
 		.filter(|number| winning_numbers.contains(number))
 		.count();
 	    winning_numbers_count

@@ -1,12 +1,11 @@
 import Data.Char
 import Data.List
-import Data.Maybe
 import Data.Bits
 import qualified Data.Set as Set
 
 cut p list =
-  let (hd, tl) = break p list
-  in (hd, snd (fromJust (uncons tl)))
+  let (hd, _:tl) = break p list
+  in (hd, tl)
 
 split p list =
   let (hd, tl) = break p list
@@ -31,12 +30,11 @@ scoreGame winningCount =
   else
     shiftL 1 (winningCount - 1)
 
-countCards total copies_list winningCounts =
-  case winningCounts of
-    [] -> total
-    hd:tl ->
-      let (copies, copies_tail) = fromJust (uncons copies_list)
-          list = map (+ copies) (take hd copies_tail) ++ drop hd copies_tail
+countCards total copies winningCounts =
+  case (winningCounts, copies) of
+    ([], _) -> total
+    (hd:tl, copies:copies_tail) ->
+      let list = map (+ copies) (take hd copies_tail) ++ drop hd copies_tail
       in countCards (total + copies) list tl
 
 main = do

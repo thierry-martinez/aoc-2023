@@ -3,8 +3,8 @@ import Data.List
 import Data.Maybe
 
 cut p list =
-  let (hd, tl) = break p list
-  in (hd, snd (fromJust (uncons tl)))
+  let (hd, (_:tl)) = break p list
+  in (hd, tl)
 
 split p list =
   let (hd, tl) = break p list
@@ -31,9 +31,8 @@ parseMaps lines =
           values = map parseLine values_str
       in values:parseMaps tail
 
-parseInput lines =
-  let (seeds_str, maps_lines) = fromJust (uncons lines)
-      seeds = map read (split (== ' ') (drop (length "seeds: ") seeds_str))
+parseInput (seeds_str:maps_lines) =
+  let seeds = map read (split (== ' ') (drop (length "seeds: ") seeds_str))
       maps = parseMaps maps_lines
   in (seeds, maps)
 

@@ -37,13 +37,12 @@ struct Instance {
 
 impl Instance {
     fn parse(line: &str) -> Instance {
-        let mut line_items = line.splitn(2, " ");
+        let (damaged_str, sequences_str) = line.split_once(' ').unwrap();
         let damaged: Vec<_> =
-            line_items.next().unwrap().chars()
+            damaged_str.chars()
             .map(|c| Symbol::from_char(c).unwrap()).collect();
         let sequences: Vec<_> =
-            line_items.next().unwrap().split(",")
-            .map(|s| s.parse().unwrap()).collect();
+            sequences_str.split(",").map(|s| s.parse().unwrap()).collect();
         Instance { damaged, sequences }
     }
 

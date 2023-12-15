@@ -1,10 +1,9 @@
 import Data.List
-import Data.Maybe
 import qualified Data.Map as Map
 
 cut p list =
-  let (hd, tl) = break p list
-  in (hd, snd (fromJust (uncons tl)))
+  let (hd, (_:tl)) = break p list
+  in (hd, tl)
 
 split p list =
   let (hd, tl) = break p list

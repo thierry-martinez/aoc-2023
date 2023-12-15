@@ -4,11 +4,9 @@ fn main() {
     let map: std::collections::HashMap<String, (String, String)> = lines.skip(1).map(
 	|line| {
 	    let line = line.unwrap();
-	    let mut parts = line.splitn(2, " = (");
-	    let src = parts.next().unwrap();
-	    let mut sides = parts.next().unwrap().splitn(2, ", ");
-	    let left = sides.next().unwrap();
-	    let mut chars = sides.next().unwrap().chars();
+	    let (src, sides) = line.as_str().split_once(" = (").unwrap();
+	    let (left, end) = sides.split_once(", ").unwrap();
+	    let mut chars = end.chars();
 	    chars.next_back();
 	    let right = chars.as_str();
 	    (src.to_string(), (left.to_string(), right.to_string()))
