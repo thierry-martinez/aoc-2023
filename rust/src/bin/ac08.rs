@@ -1,3 +1,5 @@
+use advent_of_code::lcm;
+
 fn main() {
     let mut lines = std::io::stdin().lines();
     let directions = lines.next().unwrap().unwrap();
@@ -25,17 +27,6 @@ fn main() {
 	).fold(1, lcm);
     println!("Part 1: {result_part1}");
     println!("Part 2: {result_part2}");
-}
-
-fn gcd(mut a: u64, mut b: u64) -> u64 {
-    while a % b != 0 {
-	(a, b) = (b, a % b)
-    }
-    b
-}
-
-fn lcm(a: u64, b: u64) -> u64 {
-    a * b / gcd(a, b)
 }
 
 fn path_length(

@@ -61,13 +61,7 @@ fn main() {
     let width = grid.first().unwrap().len() as i64;
     let initial_position = grid.iter().enumerate().find_map(|(y, line)|
       line.iter().enumerate().find_map(move |(x, &c)|
-        if c == 'S' {
-            Some((x as i64, y as i64))
-        }
-        else {
-            None
- 
-       }
+        (c == 'S').then_some((x as i64, y as i64))
       )
     ).unwrap();
     let mut pipes: Vec<_> = grid.iter().map(|_| Vec::new()).collect();

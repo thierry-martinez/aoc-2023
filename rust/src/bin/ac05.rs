@@ -35,7 +35,7 @@ fn main() {
 	maps.push(map);
     }
     let mut values = seeds.clone();
-    for map in maps.iter() {
+    for map in &maps {
 	let mut next_values = Vec::new();
 	for line in map {
 	    values.retain(

@@ -43,23 +43,14 @@ let journey_length instructions map initial_place =
       find (succ step_count) place instructions in
   find 0 initial_place (Seq.cycle (String.to_seqi instructions))
 
-let rec gcd a b =
-  if a mod b = 0 then
-    b
-  else
-    gcd b (a mod b)
-
 (* Not a general solution, but crafted for the kind of inputs AoC give... *)
-let lcm a b =
-  a * b / gcd a b
-
 let part2 instructions map =
   let places =
     List.of_seq
       (Seq.filter_map (fun (key, _) -> if key.[2] = 'A' then Some key else None)
          (StringMap.to_seq map)) in
   let lengths = List.map (journey_length instructions map) places in
-  List.fold_left lcm 1 lengths
+  List.fold_left Common.lcm 1 lengths
 
 let () =
   let instructions, map = parse (Common.input_lines ()) in

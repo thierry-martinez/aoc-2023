@@ -42,12 +42,7 @@ fn main() {
     let galaxies: Vec<_> =
 	grid.iter().enumerate().flat_map(|(y, line)|
           line.iter().enumerate().filter_map(move |(x, &galaxy)|
-            if galaxy {
-		Some ((x, y))
-	    }
-	    else {
-		None
-	    }
+            galaxy.then_some((x, y))
 	  )).collect();
     let result_part1 = distances(&galaxies, &empty_rows, &empty_columns, 1);
     let result_part2 =

@@ -58,3 +58,43 @@
   (name AC15)
   (modules AC15)
   (libraries common))
+(executable
+  (name AC16)
+  (modules AC16)
+  (libraries common))
+(executable
+  (name AC17)
+  (modules AC17)
+  (libraries common))
+(executable
+  (name AC18)
+  (modules AC18)
+  (libraries common))
+(executable
+  (name AC19)
+  (modules AC19)
+  (libraries common))
+(executable
+  (name AC20)
+  (modules AC20)
+  (libraries common))
+(executable
+  (name AC21)
+  (modules AC21)
+  (libraries common))
+(executable
+  (name AC22)
+  (modules AC22)
+  (libraries common))
+(executable
+  (name AC23)
+  (modules AC23)
+  (libraries common))
+(executable
+  (name AC24)
+  (modules AC24)
+  (libraries common))
+(executable
+  (name AC25)
+  (modules AC25)
+  (libraries common))
