@@ -12,10 +12,14 @@ module Coords = struct
   let ( + ) p1 p2 =
     { x = p1.x + p2.x; y = p1.y + p2.y }
 
+  let right = { x = 1; y = 0 }
+
+  let down = { x = 0; y = 1 }
+
   let neighbors p =
     List.map (( + ) p) [
         { x = -1; y = 0 }; { x = 0; y = -1 };
-        { x = 1; y = 0 }; { x = 0; y = 1 }]
+        right; down]
 
   let equal p1 p2 =
     p1.x = p2.x && p1.y = p2.y
@@ -63,6 +67,56 @@ module State = struct
 end
 
 module StateTable = Hashtbl.Make (State)
+
+type neighbor =
+  | OneWay of Coords.t
+  | BothWays of Coords.t * Coords.t
+  | Intersection of int
+
+let make_intersection_graph ~slippy grid =
+  let sz = size grid in
+  let intersection_list_ref = ref [] in
+  let intersection_count_ref = 0 in
+  let neighbor_grid =
+    Array.mapi (fun y line ->
+      Array.mapi (fun x c ->
+        let pos : Coords.t = { x, y } in
+        match c with
+        | '>' when slippy -> Some (OneWay Coords.(pos + right))
+        | 'v' when slippy -> Some (OneWay Coords.(pos + down))
+        | '.' | '>' | 'v' ->
+           let neighbors =
+             List.filter (fun pos -> in_bounds sz pos && get grid pos != '#')
+               (Coords.neighbors pos) in
+           match neighbors with
+           | [] | [_] -> None
+           | [a; b] -> Some (BothWays (a, b))
+           | _ ->
+              intersection_list_ref :=
+                (pos, neighbors) :: !intersection_list_ref;
+              let index = !intersection_count_ref in
+              intersection_count_ref := succ index;
+              Intersection index)) in
+  let rec follow_neighbor len from pos =
+    if pos = end_pos then
+      Some (len, None)
+    else
+      begin
+        let next =
+          match get neighbor_grid pos with
+          | None -> None
+          | OneWay target ->
+             if target = from then
+               None
+             else
+               target
+          | BothWays (a, b) ->
+             if a = from then
+               
+  let follow_neighbors (pos, neighbors) =
+    List.filter_map (follow_neighbor 1 pos) neighbors in
+  Array.of_list (List.rev_map follow_neighbors !intersection_list_ref)
+  
 
 let find_path ~slippy grid =
   let sz = size grid in

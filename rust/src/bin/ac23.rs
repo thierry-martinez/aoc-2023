@@ -14,10 +14,12 @@ struct Path {
 type NeighborGrid = Matrix2D<Option<Neighbor>>;
 
 fn follow_neighbor(
-    neighbor_grid: &NeighborGrid, mut from: Coords2D<usize>, mut position: Coords2D<usize>
+    neighbor_grid: &NeighborGrid, mut from: Coords2D<usize>,
+    mut position: Coords2D<usize>
 ) -> Option<Path> {
     let mut len = 1;
-    let end = Coords2D::<usize>::from(neighbor_grid).checked_add_signed(Coords2D { x: -2, y: -1 })?;
+    let end = Coords2D::<usize>::from(neighbor_grid)
+        .checked_add_signed(Coords2D { x: -2, y: -1 })?;
     loop {
         if position == end {
             return Some(Path { len, end: None });
@@ -59,31 +61,31 @@ impl IntersectionGraph {
         let neighbor_grid: NeighborGrid = grid.iter().enumerate().map(|(y, line)|
             line.iter().enumerate().map(|(x, &c)| {
                 let position = Coords2D { x, y };
-                if slippy && c == '>' {
-                    Some(Neighbor::OneWay(position + Coords2D::<usize>::RIGHT))
-                }
-                else if slippy && c == 'v' {
-                    Some(Neighbor::OneWay(position + Coords2D::<usize>::DOWN))
-                }
-                else if c == '.' || c == '>' || c == 'v' {
-                    let neighbors: Vec<_> =
-                        Coords2D::<isize>::NEIGHBORS.iter()
+                match c {
+                    '>' if slippy =>
+                        Some(Neighbor::OneWay(
+                            position + Coords2D::<usize>::RIGHT)),
+                    'v' if slippy =>
+                        Some(Neighbor::OneWay(
+                            position + Coords2D::<usize>::DOWN)),
+                    '.' | '>' | 'v' => {
+                        let neighbors: Vec<_> =
+                            Coords2D::<isize>::NEIGHBORS.iter()
                             .filter_map(|&direction|
                                 position.advance(size, direction)
-                                    .filter(|position| *position.get(&grid) != '#'))
+                                .filter(|position| *position.get(&grid) != '#'))
                             .collect();
-                    match &neighbors[..] {
-                        &[] | &[_] => None,
-                        &[a, b] => Some(Neighbor::BothWays(a, b)),
-                        _ => {
-                            let index = intersections.len();
-                            intersections.push((position, neighbors));
-                            Some(Neighbor::Intersection(index))
+                        match &neighbors[..] {
+                            &[] | &[_] => None,
+                            &[a, b] => Some(Neighbor::BothWays(a, b)),
+                            _ => {
+                                let index = intersections.len();
+                                intersections.push((position, neighbors));
+                                Some(Neighbor::Intersection(index))
+                            }
                         }
                     }
-                }
-                else {
-                    None
+                    _ => None,
                 }
             }).collect()
         ).collect();

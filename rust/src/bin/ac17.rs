@@ -2,54 +2,43 @@ use advent_of_code::{
     Error, Result, Matrix2D, Coords2D, Zero, matrix_from_lines
 };
 
-#[derive(Clone, PartialEq, Eq, Hash)] 
-struct Visit {
-    from: Coords2D<usize>,
-    direction: Coords2D<isize>,
-    count_forward: u64,
+#[derive(Clone, Copy,PartialEq, Eq, PartialOrd, Ord, Hash)]
+enum Direction {
+    Horizontal,
+    Vertical,
 }
 
-struct VisitQueue {
-    queue: Vec<Visit>,
-    heat_loss: std::collections::HashMap<Visit, u64>,
+impl Direction {
+    fn turn(self) -> Self {
+        match self {
+            Direction::Horizontal => Direction::Vertical,
+            Direction::Vertical => Direction::Horizontal,
+        }
+    }
 }
 
-impl VisitQueue {
-    fn new() -> VisitQueue {
-        VisitQueue {
-            queue: Vec::new(),
-            heat_loss: std::collections::HashMap::new(),
-        }
-    }
+#[derive(Clone, PartialEq, Eq)] 
+struct State {
+    heat_loss: u64,
+    pos: Coords2D<usize>,
+    dir: Direction,
+}
 
-    fn push(
-        &mut self, from: Coords2D<usize>, direction: Coords2D<isize>,
-        count_forward: u64, heat_loss: u64
-    ) {
-        let visit = Visit { from, direction, count_forward };
-        match self.heat_loss.entry(visit.clone()) {
-            std::collections::hash_map::Entry::Vacant(vacant) => {
-                self.queue.push(visit);
-                vacant.insert(heat_loss);
-            }
-            std::collections::hash_map::Entry::Occupied(mut occupied) => {
-                let value = occupied.get_mut();
-                if heat_loss < *value {
-                    *value = heat_loss;
-                }
-            }
-        }
+impl State {
+    fn as_tuple(&self) -> (std::cmp::Reverse<u64>, usize, usize, Direction) {
+        (std::cmp::Reverse(self.heat_loss), self.pos.x, self.pos.y, self.dir)
     }
+}
 
-    fn pop(&mut self) -> Option<(Visit, u64)> {
-        let (visit, &heat_loss) = 
-            self.heat_loss.iter().min_by_key(|(_visit, &heat_loss)| heat_loss)?;
-        let visit = visit.clone();
-        self.heat_loss.remove(&visit)?;
-        let (index, _v) =
-            self.queue.iter().enumerate().find(|(_index, v)| **v == visit)?;
-        self.queue.remove(index);
-        Some((visit, heat_loss))
+impl Ord for State {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.as_tuple().cmp(&other.as_tuple())
+    }
+}
+
+impl PartialOrd for State {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
 
@@ -57,29 +46,53 @@ fn find_path(
     grid: &Matrix2D<u32>, min_turn: u64, max_forward: u64,
     from: Coords2D<usize>, to: Coords2D<usize>
 ) -> Result<u64> {
-    let mut visit_queue = VisitQueue::new();
-    visit_queue.push(from, Coords2D::RIGHT, 1, 0);
-    visit_queue.push(from, Coords2D::DOWN, 1, 0);
+    let mut heap = std::collections::BinaryHeap::new();
+    let mut heat_losses = std::collections::HashMap::new();
+    heap.push(State { heat_loss: 0, pos: from, dir: Direction::Horizontal });
+    heat_losses.insert((from, Direction::Horizontal), 0);
+    heap.push(State { heat_loss: 0, pos: from, dir: Direction::Vertical });
+    heat_losses.insert((from, Direction::Vertical), 0);
     loop {
-        let (visit, heat_loss) = visit_queue.pop().ok_or("Empty queue")?;
-        let Some(pos) = visit.from.advance(grid.into(), visit.direction)
-        else { continue };
-        let heat_loss = heat_loss + *pos.get(grid) as u64;
-        if visit.count_forward >= min_turn {
-            if pos == to {
-                return Ok(heat_loss)
-            }
-            visit_queue.push(
-                pos, visit.direction.turn_clockwise(), 1, heat_loss
-            );
-            visit_queue.push(
-                pos, visit.direction.turn_anticlockwise(), 1, heat_loss
-            );
+        let state = heap.pop().ok_or("Empty queue")?;
+        if state.pos == to {
+            return Ok(state.heat_loss);
         }
-        if visit.count_forward < max_forward {
-            visit_queue.push(
-                pos, visit.direction, visit.count_forward + 1, heat_loss
-            );
+        let heat_loss =
+            heat_losses.get(&(state.pos, state.dir))
+            .ok_or("Position not found")?;
+        if *heat_loss != state.heat_loss {
+            continue;
+        }
+        let dir = state.dir.turn();
+        let offsets: [Coords2D<isize>; 2] =
+            match dir {
+                Direction::Vertical => [Coords2D::UP, Coords2D::DOWN],
+                Direction::Horizontal => [Coords2D::LEFT, Coords2D::RIGHT],
+            };
+        for offset in offsets {
+            let mut pos = state.pos;
+            let mut heat_loss = state.heat_loss;
+            for step in 1..=max_forward {
+                let Some(next_pos) = pos.advance(grid.into(), offset)
+                else { break };
+                pos = next_pos;
+                heat_loss += *pos.get(grid) as u64;
+                if step >= min_turn {
+                    match heat_losses.entry((pos, dir)) {
+                        std::collections::hash_map::Entry::Vacant(vacant) => {
+                            vacant.insert(heat_loss);
+                        }
+                        std::collections::hash_map::Entry::Occupied(mut occupied) => {
+                            let cell = occupied.get_mut();
+                            if *cell <= heat_loss {
+                                continue;
+                            }
+                            *cell = heat_loss;
+                        }
+                    }
+                    heap.push(State { heat_loss, pos, dir });
+                }
+            }
         }
     }
 }

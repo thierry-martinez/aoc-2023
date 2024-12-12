@@ -65,7 +65,7 @@ pub fn lcm(a: u64, b: u64) -> u64 {
     a * b / gcd(a, b)
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct Coords2D<T> {
     pub x: T,
     pub y: T,
